@@ -16,7 +16,7 @@ int welcome(void){
   while (true){
     int response = 0;
     printf("\n========================================\n");
-    printf("    Welcome to Task Manager®!\n");
+    printf("    Welcome to TodoC® task manager!\n");
     printf("========================================\n");
     printf("1. View tasks\n");
     printf("2. Make a new task\n");
