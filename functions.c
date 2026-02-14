@@ -15,19 +15,27 @@ task temp_task_list[MAX];
 int welcome(void){
   while (true){
     int response = 0;
-    printf("\n========================================\n");
-    printf("    Welcome to TodoC® task manager!\n");
-    printf("========================================\n");
-    printf("1. View tasks\n");
-    printf("2. Make a new task\n");
-    printf("3. Delete a task\n");
-    printf("4. Exit\n");
-    printf("========================================\n");
-    printf("Enter your choice (1-4): ");
+    printf("\n");
+    printf("\033[1;36m╔════════════════════════════════════════════════════════╗\033[0m\n");
+    printf("\033[1;36m║                                                        ║\033[0m\n");
+    printf("\033[1;36m║\033[0m           \033[1;37mWELCOME TO TASK MANAGER\033[0m                      \033[1;36m║\033[0m\n");
+    printf("\033[1;36m║                                                        ║\033[0m\n");
+    printf("\033[1;36m╠════════════════════════════════════════════════════════╣\033[0m\n");
+    printf("\033[1;36m║                                                        ║\033[0m\n");
+    printf("\033[1;36m║\033[0m   \033[1;32m[1]\033[0m  View All Tasks                                  \033[1;36m║\033[0m\n");
+    printf("\033[1;36m║                                                        ║\033[0m\n");
+    printf("\033[1;36m║\033[0m   \033[1;33m[2]\033[0m  Create New Task                                 \033[1;36m║\033[0m\n");
+    printf("\033[1;36m║                                                        ║\033[0m\n");
+    printf("\033[1;36m║\033[0m   \033[1;31m[3]\033[0m  Delete Task                                     \033[1;36m║\033[0m\n");
+    printf("\033[1;36m║                                                        ║\033[0m\n");
+    printf("\033[1;36m║\033[0m   \033[1;90m[4]\033[0m  Exit Program                                    \033[1;36m║\033[0m\n");
+    printf("\033[1;36m║                                                        ║\033[0m\n");
+    printf("\033[1;36m╚════════════════════════════════════════════════════════╝\033[0m\n");
+    printf("\n  \033[1mEnter your choice (1-4):\033[0m ");
 
         if (scanf("%d", &response) != 1) {
             while (getchar() != '\n');
-            printf("\nInvalid answer, please try again.\n");
+            printf("\n  \033[1;31m Invalid input. Please enter a number between 1-4.\033[0m\n");
             continue;
         }
 
@@ -64,7 +72,13 @@ void append_task(task task, int i){
 
 void task_printer(task tasks, int i){
  
- printf("Task number: %d\nTask title: %s\nTask description: %s\n\n",task_list[i].tasknumber, task_list[i].data.task_name, task_list[i].data.task_description);
+ printf("  \033[1;36m┌─────────────────────────────────────────────────────┐\033[0m\n");
+ printf("  \033[1;36m│\033[0m \033[1;37mTask #%-2d\033[0m                                            \033[1;36m│\033[0m\n", task_list[i].tasknumber);
+ printf("  \033[1;36m├─────────────────────────────────────────────────────┤\033[0m\n");
+ printf("  \033[1;36m│\033[0m \033[1;33mTitle:\033[0m %-43s\033[1;36m  │\033[0m\n", task_list[i].data.task_name);
+ printf("  \033[1;36m│\033[0m \033[1;32mDescription:\033[0m %-36s   \033[1;36m│\033[0m\n", task_list[i].data.task_description);
+ printf("  \033[1;36m└─────────────────────────────────────────────────────┘\033[0m\n");
+ printf("\n");
 
 }
 
@@ -86,16 +100,20 @@ void add_a_task(void){
  while (true){
 
     if (amount_of_elems >= MAX) {
-    printf("Task list is full (Maximum %d tasks)\n", MAX);
+    printf("\n  \033[1;31m Task list is full (Maximum %d tasks)\033[0m\n", MAX);
     return;
 }
 
-    printf("\nLets create a task.\nTask name? (100 char limit): ");
+    printf("\n\033[1;36m╔════════════════════════════════════════════════════════╗\033[0m\n");
+    printf("\033[1;36m║\033[0m                  \033[1;37mCREATE NEW TASK\033[0m                       \033[1;36m║\033[0m\n");
+    printf("\033[1;36m╚════════════════════════════════════════════════════════╝\033[0m\n\n");
+    
+    printf("  \033[1;33m▸ Task Title\033[0m (max 100 characters)\n  ");
     char name[MAXSIZE];
     //scanf(" %99[^\n]", name);
    
       if (fgets(name, sizeof(name), stdin) == NULL) {
-        printf("Error reading input.\n");
+        printf("  \033[1;31m Error reading input.\033[0m\n");
         return;
     }
     
@@ -107,12 +125,12 @@ void add_a_task(void){
     name[strcspn(name,"\n")] = '\0';
        
     if (strlen(name) == 0) {
-        printf("Task name cannot be empty.\n");
+        printf("  \033[1;31m Task title cannot be empty.\033[0m\n");
         continue;
     }
 
 
-    printf("Task description? (100 char limit): ");
+    printf("\n  \033[1;32m▸ Task Description\033[0m (max 100 characters)\n  ");
     char description[MAXSIZE];
     //scanf(" %99[^\n]", description);
     fgets(description, sizeof(description), stdin);
@@ -139,12 +157,14 @@ void add_a_task(void){
 
     
     create_and_append_task(&temp_task, temp_task_info, temp_task.tasknumber, amount_of_elems);
-    printf("\nTask created.\n\n");
+    printf("\n  \033[1;32m  Task created successfully!\033[0m\n\n");
     amount_of_elems++;
    
 
 
-    printf("\033[4mTasks list:\033[0m\n");
+    printf("\033[1;36m─────────────────────────────────────────────────────────\033[0m\n");
+    printf("  \033[1;37mCURRENT TASKS\033[0m\n");
+    printf("\033[1;36m─────────────────────────────────────────────────────────\033[0m\n\n");
     for (int i = 0; i < amount_of_elems; i++){
     task_printer(temp_task, i);
     }
@@ -153,13 +173,13 @@ void add_a_task(void){
 
    char cont; 
    while (true) {
-   printf("Would you like to continue? (Y/N): ");
+   printf("  \033[1mWould you like to add another task? (Y/N):\033[0m ");
    scanf(" %c", &cont);
 
     while (getchar() != '\n');
    
    if (cont == 'n' || cont == 'N'){
-    printf("\nExiting to menu...\n\n");
+    printf("\n  \033[1;90m← Returning to main menu...\033[0m\n\n");
     return;
    }
    else if (cont == 'y' || cont == 'Y'){
@@ -167,7 +187,7 @@ void add_a_task(void){
    }
 
     else {
-        printf("Invalid response, try again.\n");
+        printf("  \033[1;31m Invalid response. Please enter Y or N.\033[0m\n");
     }
     }
    
@@ -181,13 +201,17 @@ void add_a_task(void){
 
 
 void view_tasks(void){
-    printf("\n\033[4mTasks list:\033[0m\n");
+    printf("\n\033[1;36m╔════════════════════════════════════════════════════════╗\033[0m\n");
+    printf("\033[1;36m║\033[0m                   \033[1;37mALL TASKS\033[0m                            \033[1;36m║\033[0m\n");
+    printf("\033[1;36m╚════════════════════════════════════════════════════════╝\033[0m\n\n");
+    
     if (amount_of_elems == 0) {
-        printf("No tasks found. Create one to get started.\n\n");
+        printf("  \033[1;90mNo tasks found.\033[0m\n");
+        printf("  \033[1;90mCreate a new task to get started.\033[0m\n\n");
         return;
     }
     for (int i = 0; i < amount_of_elems; i++){
-        printf("Task number: %d\nTask title: %s\nTask description: %s\n\n",task_list[i].tasknumber, task_list[i].data.task_name, task_list[i].data.task_description);
+        task_printer(task_list[i], i);
 
     }
     return;
@@ -200,21 +224,21 @@ void delete_a_task(){
     view_tasks();
     while(true){
     if (amount_of_elems == 0){
-        printf("No tasks to delete.\n\n");
+        printf("  \033[1;90mNo tasks available to delete.\033[0m\n\n");
         return;
     }
     else {
         int index_to_remove = 0;
-        printf("What index would you like to remove?: ");
+        printf("  \033[1;31m▸ Enter task number to delete:\033[0m ");
         if (scanf("%d", &index_to_remove) != 1) {
             while (getchar() != '\n');
-            printf("Invalid input, please enter a number.\n");
+            printf("  \033[1;31m  Invalid input. Please enter a valid number.\033[0m\n");
             continue;
         }
         while (getchar() != '\n');
         index_to_remove--;
         if (index_to_remove < 0 || index_to_remove >= amount_of_elems){
-            printf("Error: index must be in range\n");
+            printf("  \033[1;31m  Error: Task number must be between 1 and %d\033[0m\n", amount_of_elems);
             continue;
         }
         else {
@@ -235,7 +259,10 @@ void delete_a_task(){
 
 
                 }
-            printf("New task list:\n");
+            printf("\n  \033[1;32m Task deleted successfully!\033[0m\n");
+            printf("\n\033[1;36m─────────────────────────────────────────────────────────\033[0m\n");
+            printf("  \033[1;37mUPDATED TASK LIST\033[0m\n");
+            printf("\033[1;36m─────────────────────────────────────────────────────────\033[0m\n");
             view_tasks();
             return;
             
