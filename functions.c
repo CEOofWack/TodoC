@@ -110,7 +110,7 @@ void add_a_task(void){
     
     printf("  \033[1;33m▸ Task Title\033[0m (max 100 characters)\n  ");
     char name[MAXSIZE];
-    //scanf(" %99[^\n]", name);
+    
    
       if (fgets(name, sizeof(name), stdin) == NULL) {
         printf("  \033[1;31m Error reading input.\033[0m\n");
@@ -132,7 +132,7 @@ void add_a_task(void){
 
     printf("\n  \033[1;32m▸ Task Description\033[0m (max 100 characters)\n  ");
     char description[MAXSIZE];
-    //scanf(" %99[^\n]", description);
+    
     fgets(description, sizeof(description), stdin);
     
     if (strchr(description, '\n') == NULL) {
