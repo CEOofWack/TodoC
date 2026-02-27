@@ -61,7 +61,6 @@ void display_greeting(){
 }
 
 
-// Welcome
 int welcome(void){
   while (true){
     int response = 0;
@@ -115,7 +114,7 @@ task* task_init(task* task_array){
     if (amount_of_elems >= MAX) {
     printf("\n  \033[1;31m✗ Task list is full (Maximum %d tasks)\033[0m\n", MAX);
     return task_array;
-}
+        }
 
     printf("\n\033[1;36m╔══════════════════════════════════════════════════╗\033[0m\n");
     printf("\033[1;36m║\033[0m            \033[1;37m✚  CREATE NEW TASK\033[0m                    \033[1;36m║\033[0m\n");
@@ -147,7 +146,6 @@ task* task_init(task* task_array){
     fgets(description, sizeof(description), stdin);
     
     if (strchr(description, '\n') == NULL) {
-            
             int c;
             while ((c = getchar()) != '\n' && c != EOF);
         }
