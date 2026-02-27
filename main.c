@@ -32,7 +32,7 @@ int main(){
     }
 
     else if(begin == 2){
-        task_init(task_list1);
+       task_list1 = task_init(task_list1);
 
     }
 

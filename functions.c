@@ -12,12 +12,23 @@ int amount_of_elems = 0;
 
 
 task *allocate_memory(){
-    task *task_address = malloc(MAX * sizeof(task));
+    task *task_address = malloc(sizeof(task));
     if (task_address == NULL){
         puts("Malloc Error, exiting");
         exit(EXIT_FAILURE);
     }
     return task_address;
+
+}
+
+
+task *reallocate_memory(task* ptr_to_task){
+    task* new_ptr_to_task = realloc(ptr_to_task, sizeof(task) * (amount_of_elems + 1));
+    if(new_ptr_to_task == NULL){
+        puts("Error reallocating memory");
+        exit(EXIT_FAILURE);
+    }
+    return new_ptr_to_task;
 
 }
 
@@ -97,13 +108,13 @@ void view_tasks(task* task_list_to_display){
 
 
 
-void task_init(task* task_array){
+task* task_init(task* task_array){
 
     while (true){
 
     if (amount_of_elems >= MAX) {
     printf("\n  \033[1;31m✗ Task list is full (Maximum %d tasks)\033[0m\n", MAX);
-    return;
+    return task_array;
 }
 
     printf("\n\033[1;36m╔══════════════════════════════════════════════════╗\033[0m\n");
@@ -116,7 +127,7 @@ void task_init(task* task_array){
     
       if (fgets(name, sizeof(name), stdin) == NULL) {
         printf("  \033[1;31m✗ Error reading input.\033[0m\n");
-        return;
+        return task_array;
     }
     
     if (strchr(name, '\n') == NULL) {
@@ -143,14 +154,19 @@ void task_init(task* task_array){
     
     description[strcspn(description,"\n")] = '\0';
 
-
+        
+    task_array = reallocate_memory(task_array);
+    
     task_append(task_array, name, description, amount_of_elems);
     printf("\n  \033[1;32m✓ Task created successfully!\033[0m\n");
     amount_of_elems++;
 
-    view_tasks(task_array);
+   
+    
 
-    char cont; 
+   view_tasks(task_array);
+
+   char cont; 
    while (true) {
    printf("  \033[1;37m▸ Would you like to add another task? (Y/N):\033[0m ");
    scanf(" %c", &cont);
@@ -159,7 +175,7 @@ void task_init(task* task_array){
    
    if (cont == 'n' || cont == 'N'){
     printf("\n  \033[0;37mReturning to main menu...\033[0m\n\n");
-    return;
+    return task_array;
    }
    else if (cont == 'y' || cont == 'Y'){
     break;
