@@ -9,6 +9,7 @@ void display_greeting(void);
 int welcome(void);
 task* task_init(task* task_array);
 void view_tasks(task* task_list_to_display);
+void edit_a_task(task* task_to_edit);
 void delete_a_task(task* task_address);
 
 #endif

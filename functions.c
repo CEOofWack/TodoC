@@ -39,6 +39,7 @@ void task_append(task* task_to_append_to, char *name_to_add, char* desc_to_add, 
     task_to_append_to[task_num].data.task_name[MAXSIZE - 1] = '\0';
     strncpy(task_to_append_to[task_num].data.task_description, desc_to_add, MAXSIZE - 1);
     task_to_append_to[task_num].data.task_description[MAXSIZE - 1] = '\0';
+    task_to_append_to[task_num].data.completed = false;
 
 }
 
@@ -54,7 +55,8 @@ void display_greeting(){
     printf("\033[1;36m║\033[0m   \033[1;33m[1]\033[0m  View All Tasks                            \033[1;36m║\033[0m\n");
     printf("\033[1;36m║\033[0m   \033[1;33m[2]\033[0m  Create New Task                           \033[1;36m║\033[0m\n");
     printf("\033[1;36m║\033[0m   \033[1;33m[3]\033[0m  Delete Task                               \033[1;36m║\033[0m\n");
-    printf("\033[1;36m║\033[0m   \033[1;33m[4]\033[0m  Exit Program                              \033[1;36m║\033[0m\n");
+    printf("\033[1;36m║\033[0m   \033[1;33m[4]\033[0m  Edit Task                                 \033[1;36m║\033[0m\n");
+    printf("\033[1;36m║\033[0m   \033[1;33m[5]\033[0m  Exit Program                              \033[1;36m║\033[0m\n");
     printf("\033[1;36m║\033[0m                                                  \033[1;36m║\033[0m\n");
     printf("\033[1;36m╚══════════════════════════════════════════════════╝\033[0m\n");
     printf("\n  \033[1;37m▸ Select an option:\033[0m ");
@@ -72,7 +74,7 @@ int welcome(void){
         }
 
         while (getchar() != '\n');
-        if (response >= 1 && response <=4 ){
+        if (response >= 1 && response <=5 ){
             return response;
             }
     }
@@ -94,6 +96,7 @@ void view_tasks(task* task_list_to_display){
         printf("  \033[1;36m│\033[0m  \033[1;33mTask #%d\033[0m\n", task_list_to_display[i].tasknumber);
         printf("  \033[1;36m│\033[0m  \033[1;37mName:\033[0m %s\n", task_list_to_display[i].data.task_name);
         printf("  \033[1;36m│\033[0m  \033[1;37mDescription:\033[0m %s\n", task_list_to_display[i].data.task_description);
+        printf("  \033[1;36m│\033[0m  \033[1;37mCompleted:\033[0m %s\n", task_list_to_display[i].data.completed ? "true" : "false");
         printf("  \033[1;36m└──────────────────────────────────────────────┘\033[0m\n");
         
     }
@@ -152,8 +155,11 @@ task* task_init(task* task_array){
     
     description[strcspn(description,"\n")] = '\0';
 
+
+
         
     task_array = reallocate_memory(task_array);
+
     
     task_append(task_array, name, description, amount_of_elems);
     printf("\n  \033[1;32m✓ Task created successfully!\033[0m\n");
@@ -187,6 +193,65 @@ task* task_init(task* task_array){
    }
 
     }
+
+
+
+void edit_a_task(task* task_to_edit){
+
+    view_tasks(task_to_edit);
+
+    while (true) {
+        if (amount_of_elems == 0) {
+            printf("  \033[1;33m\u26a0  No tasks available to edit.\033[0m\n\n");
+            return;
+        }
+
+        int index_to_change = 0;
+        printf("  \033[1;31m\u25b8 Enter task number to change status:\033[0m ");
+        if (scanf("%d", &index_to_change) != 1) {
+            while (getchar() != '\n')
+                ;
+            printf("  \033[1;31m\u2717 Invalid input. Please enter a valid number.\033[0m\n");
+            continue;
+        }
+        while (getchar() != '\n')
+            ;
+        index_to_change--;
+
+        if (index_to_change < 0 || index_to_change >= amount_of_elems) {
+            printf("  \033[1;31m\u2717 Error: Task number must be between 1 and %d\033[0m\n", amount_of_elems);
+            continue;
+        }
+
+        char completed;
+        while (true) {
+            printf("Have you completed the task? (Y/N): ");
+            scanf(" %c", &completed);
+            while (getchar() != '\n')
+                ;
+            if (completed == 'Y' || completed == 'y') {
+                task_to_edit[index_to_change].data.completed = true;
+                break;
+            } else if (completed == 'N' || completed == 'n') {
+                task_to_edit[index_to_change].data.completed = false;
+                break;
+            } else {
+                printf("  \033[1;31m\u2717 Invalid input. Type 'Y' or 'N'.\033[0m\n");
+            }
+        }
+
+        printf("\n  \033[1;32m✓ Task status changed successfully!\033[0m\n");
+        printf("\n\033[1;36m╔══════════════════════════════════════════════════╗\033[0m\n");
+        printf("\033[1;36m║\033[0m           \033[1;37m📋  UPDATED TASK LIST\033[0m                  \033[1;36m║\033[0m\n");
+        printf("\033[1;36m╚══════════════════════════════════════════════════╝\033[0m\n");
+        view_tasks(task_to_edit);
+        return;
+    }
+}
+
+    
+
+
 
 
 
