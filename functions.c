@@ -4,9 +4,9 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <gtk/gtk.h>
 
 
-#define MAX 100
 int amount_of_elems = 0;
 
 
@@ -114,8 +114,8 @@ task* task_init(task* task_array){
 
     while (true){
 
-    if (amount_of_elems >= MAX) {
-    printf("\n  \033[1;31m✗ Task list is full (Maximum %d tasks)\033[0m\n", MAX);
+    if (amount_of_elems >= MAXSIZE) {
+    printf("\n  \033[1;31m✗ Task list is full (Maximum %d tasks)\033[0m\n", MAXSIZE);
     return task_array;
         }
 
