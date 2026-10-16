@@ -1,64 +1,90 @@
 #include <stdio.h>
-#include "functions.h"
-#include "types.h"
+#include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <stdlib.h>
 #include <assert.h>
-#include <errno.h>
+#include "types.h"
+#include "functions.h"
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~TASK MANAGER~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Simple C task manager. Uses structures to store task information in arrays. Functions
-to append and remove from array defined in functions.c file, structures used defined 
-in types.h header file. Allows users to list, add and remove tasks
-
-
+/* TaskManager 2
+ * Author: Bisher Almazloum
+ * New version of previous task manager with linked list as underlying data structure. 
+ * Allows users to view tasks, create/delete, as well as edit tasks.
+ * Handles invalid input and enforces basic memory safety.
+ * Multi-file structure to avoid long, confusing code.
+ * 
+ * Try to break this as much as possible
 */
 
 
-int main(){
+int main(void){
 
-    task* task_list1 = allocate_memory();
+    int tasknumber = 1;
+    int* px = &tasknumber;
 
-    while (true){
-    display_greeting();
+    task *head;
 
-    int begin = welcome();
+    head->next_task = malloc(sizeof(task));
+    strcpy(head->next_task->data.task_description, "empty");
 
-     if(begin == 1){
-        view_tasks(task_list1);
+// Options:\n 1. View All Tasks\n 2. Add New Task\n 3. Delete Task\n 4. Edit Task\n 5. Exit program\n
+while(true){
 
-    }
+    int choice = choice_handling();
 
-    else if(begin == 2){
-       task_list1 = task_init(task_list1);
+    switch (choice){
 
-    }
-
-     else if(begin == 3){
-        delete_a_task(task_list1);
-
-    }
-    else if(begin == 4){
-        edit_a_task(task_list1);
-
-    }
-
-    else if (begin == 5){
-        printf("\n\033[1;36m══════════════════════════════════════════════════════\033[0m\n");
-        printf("  \033[1;37m  Goodbye! Thanks for using Task Manager 2.0\033[0m\n");
-        printf("\033[1;36m══════════════════════════════════════════════════════\033[0m\n\n");
+    case 1:
+        if ((*px) == 1){
+            printf("\nEmpty task list, make a new task.\n\n");
+            continue;
+        }
+        view_task_list(head);
         break;
 
+    case 2:
+        ;
+        _Bool b = create_task(px, head);
+        if(b){
+            break;
+        }
+        else{
+            puts("Error");
+            exit(EXIT_FAILURE);
+        }
+    
+
+    case 3:
+        ;
+        _Bool cont = delete_task(head, px);
+        break;
+    //puts("inclomplete feature");
+    //exit(EXIT_SUCCESS);
+    
+    
+     case 4: 
+     if(*px != 1){
+        view_task_list(head);
+     }
+     edit_task(head, px);
+     break;
+
+
+    case 5:
+        clear_list(head->next_task);
+        puts("Goodbye!");
+        exit(EXIT_SUCCESS);
+        
+
+    default:
+        puts("Caught by the default, something wrong");
+        exit(EXIT_FAILURE);
     }
 
-    }
+
+}
 
 
-
-    free(task_list1);
-    task_list1 = NULL;
-
-    return 0;
+    
+    return 0; 
 }

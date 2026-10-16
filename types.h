@@ -9,12 +9,12 @@ typedef struct{
 }task_info;
 
 
-typedef struct{
-    int tasknumber;
+typedef struct task_type{
+    int task_number;
     task_info data;
+    struct task_type *next_task;
 
 }task;
-
 
 
 #endif

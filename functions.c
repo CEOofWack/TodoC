@@ -1,135 +1,104 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 #include "types.h"
 #include <string.h>
-#include <stdbool.h>
-#include <stdlib.h>
 #include <assert.h>
-#include <gtk/gtk.h>
 
-
-int amount_of_elems = 0;
-
-
-
-task *allocate_memory(){
-    task *task_address = malloc(sizeof(task));
-    if (task_address == NULL){
-        puts("Malloc Error, exiting");
-        exit(EXIT_FAILURE);
-    }
-    return task_address;
-
+/*Moves cursor in stdin to ignore irrelevant user input.*/
+void flush_input_buffer(void){
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
 }
 
 
-task *reallocate_memory(task* ptr_to_task){
-    task* new_ptr_to_task = realloc(ptr_to_task, sizeof(task) * (amount_of_elems + 1));
-    if(new_ptr_to_task == NULL){
-        puts("Error reallocating memory");
-        exit(EXIT_FAILURE);
-    }
-    return new_ptr_to_task;
-
+/*Displays welcome message.*/
+void welcome(void){
+    printf("Welcome to task Manager!!!\n");
+    printf("Options:\n 1. View All Tasks\n 2. Add New Task\n 3. Delete Task\n 4. Edit Task\n 5. Exit program\n");
+    printf("Answer: ");
 }
 
+/*Handles user input. Presents choices 1-5 and responds accordingly to invalid input.*/
+int choice_handling(void){
+    while(true){
+        welcome();
+        int response = 0;
+        response = getchar() - '0';
 
-void task_append(task* task_to_append_to, char *name_to_add, char* desc_to_add, int task_num){
-    task_to_append_to[task_num].tasknumber = task_num + 1;
-    strncpy(task_to_append_to[task_num].data.task_name,name_to_add, MAXSIZE - 1);
-    task_to_append_to[task_num].data.task_name[MAXSIZE - 1] = '\0';
-    strncpy(task_to_append_to[task_num].data.task_description, desc_to_add, MAXSIZE - 1);
-    task_to_append_to[task_num].data.task_description[MAXSIZE - 1] = '\0';
-    task_to_append_to[task_num].data.completed = false;
-
-}
-
-
-
-
-void display_greeting(){
-    printf("\n");
-    printf("\033[1;36m╔══════════════════════════════════════════════════╗\033[0m\n");
-    printf("\033[1;36m║\033[0m        \033[1;37m✦  TASK MANAGER 2.0  ✦\033[0m                    \033[1;36m║\033[0m\n");
-    printf("\033[1;36m╠══════════════════════════════════════════════════╣\033[0m\n");
-    printf("\033[1;36m║\033[0m                                                  \033[1;36m║\033[0m\n");
-    printf("\033[1;36m║\033[0m   \033[1;33m[1]\033[0m  View All Tasks                            \033[1;36m║\033[0m\n");
-    printf("\033[1;36m║\033[0m   \033[1;33m[2]\033[0m  Create New Task                           \033[1;36m║\033[0m\n");
-    printf("\033[1;36m║\033[0m   \033[1;33m[3]\033[0m  Delete Task                               \033[1;36m║\033[0m\n");
-    printf("\033[1;36m║\033[0m   \033[1;33m[4]\033[0m  Edit Task                                 \033[1;36m║\033[0m\n");
-    printf("\033[1;36m║\033[0m   \033[1;33m[5]\033[0m  Exit Program                              \033[1;36m║\033[0m\n");
-    printf("\033[1;36m║\033[0m                                                  \033[1;36m║\033[0m\n");
-    printf("\033[1;36m╚══════════════════════════════════════════════════╝\033[0m\n");
-    printf("\n  \033[1;37m▸ Select an option:\033[0m ");
-}
-
-
-int welcome(void){
-  while (true){
-    int response = 0;
-
-        if (scanf("%d", &response) != 1) {
-            while (getchar() != '\n');
-            printf("\n  \033[1;31m✗ Invalid input. Please enter a number between 1-4.\033[0m\n");
-            continue;
-        }
-
-        while (getchar() != '\n');
-        if (response >= 1 && response <=5 ){
+    if ((response >= 1 && response <= 5)){
+        if (getchar() == '\n'){
             return response;
-            }
+        }
     }
-}
 
-
-void view_tasks(task* task_list_to_display){
-    printf("\n\033[1;36m╔══════════════════════════════════════════════════╗\033[0m\n");
-    printf("\033[1;36m║\033[0m              \033[1;37m📋  ALL TASKS\033[0m                       \033[1;36m║\033[0m\n");
-    printf("\033[1;36m╚══════════════════════════════════════════════════╝\033[0m\n");
-    
-    if (amount_of_elems == 0) {
-        printf("\n  \033[1;33m⚠  No tasks found.\033[0m\n");
-        printf("  \033[0;37mCreate a new task to get started.\033[0m\n\n");
-        return;
+    printf("\nInvalid input. Please enter a number between 1-5.\n\n");
+    flush_input_buffer();
     }
-    for (int i = 0; i < amount_of_elems; i++){
-        printf("\n  \033[1;36m┌──────────────────────────────────────────────┐\033[0m\n");
-        printf("  \033[1;36m│\033[0m  \033[1;33mTask #%d\033[0m\n", task_list_to_display[i].tasknumber);
-        printf("  \033[1;36m│\033[0m  \033[1;37mName:\033[0m %s\n", task_list_to_display[i].data.task_name);
-        printf("  \033[1;36m│\033[0m  \033[1;37mDescription:\033[0m %s\n", task_list_to_display[i].data.task_description);
-        printf("  \033[1;36m│\033[0m  \033[1;37mCompleted:\033[0m %s\n", task_list_to_display[i].data.completed ? "true" : "false");
-        printf("  \033[1;36m└──────────────────────────────────────────────┘\033[0m\n");
         
-    }
-    printf("\n");
-    return;
-
-
 }
 
 
 
+/*Displays full task list.*/
+void view_task_list(task* task_list){
+    task *curr = task_list;
+    curr = curr->next_task;
+    task_list = task_list->next_task;
 
+    printf("\n");
+    while (curr != NULL){
+        printf("\n\nTask Number %d\nTask name: %s\nTask Description: %s\nCompleted: %s ", curr->task_number, curr->data.task_name, curr->data.task_description, curr->data.completed ? "true" : "false");
+        curr = curr->next_task;
+    }
+    printf("\n-----End of Task list-----\n\n");
 
-task* task_init(task* task_array){
+}
 
+/*Initializes task structure and returns reference to new heap allocated struct of "task" type.*/
+task *task_init(int* tasknumber, char* taskname, char* taskdescription){
+    task *temp_task = malloc(sizeof(task));
+    if(temp_task == NULL){
+        printf("Error with memory allocation");
+        exit(EXIT_FAILURE);
+    }
+    temp_task->task_number = *tasknumber;
+    strncpy(temp_task->data.task_name, taskname, MAXSIZE - 1);
+    strncpy(temp_task->data.task_description, taskdescription, MAXSIZE - 1);
+    temp_task->next_task = NULL;
+    (*tasknumber)++;
+    
+    return temp_task;
+
+}
+
+/*Appends task struct to linked list.*/
+void task_append(task* task_to_append, task* head){
+    while (true){
+        if(head->next_task == NULL){
+            break;
+        }
+        head = head->next_task;
+    }
+    
+    task_to_append->next_task = NULL;
+    head->next_task = task_to_append;  
+}
+
+/*Handles the creation and addition to linked list of a new task struct. Takes user input to initialize required fields and handles invalid input accordingly.*/
+_Bool create_task(int *tasknumber, task* head){
+   
     while (true){
 
-    if (amount_of_elems >= MAXSIZE) {
-    printf("\n  \033[1;31m✗ Task list is full (Maximum %d tasks)\033[0m\n", MAXSIZE);
-    return task_array;
-        }
-
-    printf("\n\033[1;36m╔══════════════════════════════════════════════════╗\033[0m\n");
-    printf("\033[1;36m║\033[0m            \033[1;37m✚  CREATE NEW TASK\033[0m                    \033[1;36m║\033[0m\n");
-    printf("\033[1;36m╚══════════════════════════════════════════════════╝\033[0m\n\n");
-    printf("  \033[1;37mTask Title\033[0m (max 100 characters): ");
+    printf("\nEnter task name (max 100 characters): ");
+    
     
     char name[MAXSIZE];
     char description[MAXSIZE];
     
       if (fgets(name, sizeof(name), stdin) == NULL) {
-        printf("  \033[1;31m✗ Error reading input.\033[0m\n");
-        return task_array;
+        printf("Error reading input.");
+        return false;
     }
     
     if (strchr(name, '\n') == NULL) {
@@ -140,12 +109,12 @@ task* task_init(task* task_array){
     name[strcspn(name,"\n")] = '\0';
        
     if (strlen(name) == 0) {
-        printf("  \033[1;31m✗ Task title cannot be empty.\033[0m\n");
+        printf("\nTask title cannot be empty.\n");
         continue;
     }
 
 
-    printf("  \033[1;37mTask Description\033[0m (max 100 characters): ");
+    printf("\nTask Description (max 100 characters): ");
     fgets(description, sizeof(description), stdin);
     
     if (strchr(description, '\n') == NULL) {
@@ -155,149 +124,224 @@ task* task_init(task* task_array){
     
     description[strcspn(description,"\n")] = '\0';
 
-
-
+    if(*tasknumber == 1){
+        strncpy(head->next_task->data.task_name, name, MAXSIZE - 1);
+        strncpy(head->next_task->data.task_description, description, MAXSIZE - 1);
+        head->next_task->next_task = NULL;
+        head->next_task->task_number = 1;
+        (*tasknumber)++;
         
-    task_array = reallocate_memory(task_array);
 
+    }
+    else{
+        task_append(task_init(tasknumber, name, description), head);
+
+    }
     
-    task_append(task_array, name, description, amount_of_elems);
-    printf("\n  \033[1;32m✓ Task created successfully!\033[0m\n");
-    amount_of_elems++;
+    printf("\nTask created successfully!\n");
 
-   
-    
-
-   view_tasks(task_array);
 
    char cont; 
+   //int end_check;
+
    while (true) {
-   printf("  \033[1;37m▸ Would you like to add another task? (Y/N):\033[0m ");
-   scanf(" %c", &cont);
+   printf("\nWould you like to add another task? (Y/N): ");
 
-    while (getchar() != '\n');
+   cont = getchar();
+
+   if ((cont == 'n' || cont == 'N')){
+    if (getchar() == '\n'){
+        printf("\nReturning to main menu...\n\n");
+        return true;
+        }
+   }
+   else if ((cont == 'y' || cont == 'Y')){
+       if (getchar() == '\n'){
+        break;
+        }
+   }
+
+    printf("\nInvalid response. Please enter Y or N.\n");
+    flush_input_buffer();
+    
+    }
    
-   if (cont == 'n' || cont == 'N'){
-    printf("\n  \033[0;37mReturning to main menu...\033[0m\n\n");
-    return task_array;
    }
-   else if (cont == 'y' || cont == 'Y'){
-    break;
-   }
+    
+}
 
-    else {
-        printf("  \033[1;31m✗ Invalid response. Please enter Y or N.\033[0m\n");
+/*Frees all heap allocated structs from memory.*/
+void clear_list(task* head){
+    task* temp = head;
+
+    while(head != NULL){
+        head = head->next_task;
+        free(temp);
+        temp = head;
     }
+
+}
+
+
+
+
+/*Displays an individual task.*/
+void display_task(task * curr){
+     printf("\nTask Number %d\nTask name: %s\nTask Description: %s\nCompleted: %s \n", curr->task_number, curr->data.task_name, curr->data.task_description, curr->data.completed ? "true" : "false");
+
+}
+
+
+
+/*Handles task editing.*/
+void edit_task(task* head, int *tasknumber){
+    int idx_to_edit;
+    char cont, cont2;
+
+    task* curr = head->next_task;
+    if((*tasknumber) == 1){
+        printf("\nNo tasks to edit.\n\n");
+        return;
     }
    
-   }
+    // Re-check indexing just 2 be sure
+    while(true){
+        printf("\nEnter task index to edit: ");
+        idx_to_edit = getchar() - '0';
+
+        if((idx_to_edit > ((*tasknumber)-1)) || (idx_to_edit < 1)){
+        printf("\nError: Index to edit must be within range\n\n");
+        flush_input_buffer();
+        }
+        else if(getchar() == '\n'){
+            break;
+        }
+        else{
+            printf("\nInvalid input: index must be int and within range.\n\n");
+            flush_input_buffer();
+        }
+            
+
+        
+    
 
     }
-
-
-
-void edit_a_task(task* task_to_edit){
-
-    view_tasks(task_to_edit);
+    
+    // Indexing problem fixed for now, keep checking though
+    if (idx_to_edit != 1){
+        for(int x = 1; x < idx_to_edit; x++){
+            curr = curr->next_task;
+        }
+            }
 
     while (true) {
-        if (amount_of_elems == 0) {
-            printf("  \033[1;33m\u26a0  No tasks available to edit.\033[0m\n\n");
-            return;
-        }
 
-        int index_to_change = 0;
-        printf("  \033[1;31m\u25b8 Enter task number to change status:\033[0m ");
-        if (scanf("%d", &index_to_change) != 1) {
-            while (getchar() != '\n')
-                ;
-            printf("  \033[1;31m\u2717 Invalid input. Please enter a valid number.\033[0m\n");
-            continue;
-        }
-        while (getchar() != '\n')
-            ;
-        index_to_change--;
+        display_task(curr);
+        printf("\nWould you like to edit this task? (Y or N): ");
 
-        if (index_to_change < 0 || index_to_change >= amount_of_elems) {
-            printf("  \033[1;31m\u2717 Error: Task number must be between 1 and %d\033[0m\n", amount_of_elems);
-            continue;
-        }
+        cont = getchar();
 
-        char completed;
-        while (true) {
-            printf("Have you completed the task? (Y/N): ");
-            scanf(" %c", &completed);
-            while (getchar() != '\n')
-                ;
-            if (completed == 'Y' || completed == 'y') {
-                task_to_edit[index_to_change].data.completed = true;
-                break;
-            } else if (completed == 'N' || completed == 'n') {
-                task_to_edit[index_to_change].data.completed = false;
-                break;
-            } else {
-                printf("  \033[1;31m\u2717 Invalid input. Type 'Y' or 'N'.\033[0m\n");
+        if ((cont == 'n' || cont == 'N')){
+            if (getchar() == '\n'){
+                printf("\nReturning to main menu...\n\n");
+                return;
+            }
+        }      
+        else if ((cont == 'y' || cont == 'Y')){
+            if (getchar() == '\n'){
+                printf("Is this task complete? (Y or N): ");
+                cont2 = getchar();
+
+                if ((cont2 == 'n' || cont2 == 'N')){
+                    if (getchar() == '\n'){
+                        curr->data.completed = false;
+                        display_task(curr);
+                        printf("\nTask set as incomplete. Returning to main menu...\n\n");
+                        return;
+                    }
+                }      
+                else if ((cont == 'y' || cont == 'Y')){
+                    if (getchar() == '\n'){
+                        curr->data.completed = true;
+                        printf("\nTask set as complete. Returning to main menu...\n\n");
+                        display_task(curr);
+                        return;
+                    }
+                }
+
+                printf("\nInvalid response. Please enter Y or N.\n");
+                flush_input_buffer();
             }
         }
+        printf("\nInvalid response. Please enter Y or N.\n");
+        flush_input_buffer();
+        
+        }
+         
+}
 
-        printf("\n  \033[1;32m✓ Task status changed successfully!\033[0m\n");
-        printf("\n\033[1;36m╔══════════════════════════════════════════════════╗\033[0m\n");
-        printf("\033[1;36m║\033[0m           \033[1;37m📋  UPDATED TASK LIST\033[0m                  \033[1;36m║\033[0m\n");
-        printf("\033[1;36m╚══════════════════════════════════════════════════╝\033[0m\n");
-        view_tasks(task_to_edit);
-        return;
+void shift_indecies(task* head){
+    task* temp = head;
+    while (temp != NULL){
+        temp->task_number--;
+        temp = temp->next_task;
     }
 }
 
-    
 
 
+/*INCOMPLETE: deletes task and shifts indexes of tasks accordingly.*/
+_Bool delete_task(task* head, int* px){
+    int idx_to_delete = 0;
 
+    // First node by default
+    task* curr = head->next_task;
+    // Second node by default
+    task* next = curr->next_task;
 
+    task* temp;
 
-
-void delete_a_task(task* task_address){
-    
-    view_tasks(task_address);
-    while(true){
-    if (amount_of_elems == 0){
-        printf("  \033[1;33m⚠  No tasks available to delete.\033[0m\n\n");
-        return;
-    }
-    else {
-        int index_to_remove = 0;
-        printf("  \033[1;31m▸ Enter task number to delete:\033[0m ");
-        if (scanf("%d", &index_to_remove) != 1) {
-            while (getchar() != '\n');
-            printf("  \033[1;31m✗ Invalid input. Please enter a valid number.\033[0m\n");
-            continue;
+    while (true){
+        if(*px == 1){
+            printf("Empty task list. Make a new task.\n\n");
+            return false;
         }
-        while (getchar() != '\n');
-        index_to_remove--;
-        if (index_to_remove < 0 || index_to_remove >= amount_of_elems){
-            printf("  \033[1;31m✗ Error: Task number must be between 1 and %d\033[0m\n", amount_of_elems);
-            continue;
-        }
-        else {
-            for (int i = index_to_remove; i < amount_of_elems - 1; i++) {
-            task_address[i] = task_address[i + 1];
-            task_address[i].tasknumber = i + 1;
-    }
-    amount_of_elems--;
-
-
-            printf("\n  \033[1;32m✓ Task deleted successfully!\033[0m\n");
-            printf("\n\033[1;36m╔══════════════════════════════════════════════════╗\033[0m\n");
-            printf("\033[1;36m║\033[0m           \033[1;37m📋  UPDATED TASK LIST\033[0m                  \033[1;36m║\033[0m\n");
-            printf("\033[1;36m╚══════════════════════════════════════════════════╝\033[0m\n");
-            view_tasks(task_address);
-            return;
-            
+        printf("\nEnter item to delete: ");
+        idx_to_delete = getchar() - '0';
+        if ((idx_to_delete > ((*px) - 1)) || (idx_to_delete < 1)){
+            if(getchar() == '\n'){
+                printf("\nError: Index to delete must be within bounds.\n");
+                flush_input_buffer();
+                continue;
             }
-
-
         }
-
-
+        if (idx_to_delete == 1){
+            head->next_task = next;
+            free(curr);
+            shift_indecies(head);
+            printf("\nTask 1 sucessfuly deleted!\n"); 
+            (*px)--;
+            flush_input_buffer(); 
+            return true; 
+        }
+        else{
+            //segfault here likely
+            for(int i = 0; i < idx_to_delete; i++){
+                curr = curr->next_task;
+                next = next->next_task;
+            }
+            temp = curr;
+            shift_indecies(curr);
+            curr->next_task = next;
+            free(temp);
+            (*px)--;
+            printf("\nTask %d sucessfuly deleted!\n\n", idx_to_delete);
+            return true;
+        }
+        printf("\nInvalid input. Try again.\n\n");
+        flush_input_buffer();
+        
     }
+    
+
 }
