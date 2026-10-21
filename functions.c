@@ -195,7 +195,8 @@ void display_task(task * curr){
 
 /*Handles task editing.*/
 void edit_task(task* head, int *tasknumber){
-    int idx_to_edit;
+    char idx_to_edit[MAXSIZE];
+    int idx = 0;
     char cont, cont2;
 
     task* curr = head->next_task;
@@ -207,9 +208,11 @@ void edit_task(task* head, int *tasknumber){
     // Re-check indexing just 2 be sure
     while(true){
         printf("\nEnter task index to edit: ");
-        idx_to_edit = getchar() - '0';
+        //idx_to_edit = getchar() - '0';
+        fgets(idx_to_edit, sizeof(idx_to_edit), stdin);
+        idx = atoi(idx_to_edit);
 
-        if((idx_to_edit > ((*tasknumber)-1)) || (idx_to_edit < 1)){
+        if((idx > ((*tasknumber)-1)) || (idx < 1)){
         printf("\nError: Index to edit must be within range\n\n");
         flush_input_buffer();
         }
@@ -220,16 +223,12 @@ void edit_task(task* head, int *tasknumber){
             printf("\nInvalid input: index must be int and within range.\n\n");
             flush_input_buffer();
         }
-            
-
-        
-    
 
     }
     
     // Indexing problem fixed for now, keep checking though
-    if (idx_to_edit != 1){
-        for(int x = 1; x < idx_to_edit; x++){
+    if (idx != 1){
+        for(int x = 1; x < idx; x++){
             curr = curr->next_task;
         }
             }
