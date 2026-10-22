@@ -22,7 +22,7 @@ void display_task(task * curr){
 /*Displays welcome message.*/
 void welcome(void){
     printf("Welcome to task Manager!\n");
-    printf("Options:\n 1. View All Tasks\n 2. Add New Task\n 3. Delete Task\n 4. Edit Task\n 5. Exit program\n");
+    printf("Options:\n 1. View All Tasks\n 2. Add New Task\n 3. Delete Task (INCOMPLETE)\n 4. Edit Task (INCOMPLETE)\n 5. Exit program\n");
     printf("Answer: ");
 }
 
@@ -56,6 +56,7 @@ void view_task_list(task* task_list){
     printf("\n-----Begin Task list-----");
     display_task(curr);
     curr = curr->next_task;
+    if(curr == NULL){ printf("-----End of Task list-----\n\n"); return;}
     while (curr != NULL){
         printf("\n\nTask Number %d\nTask name: %s\nTask Description: %s\nCompleted: %s ", curr->task_number, curr->data.task_name, curr->data.task_description, curr->data.completed ? "true" : "false");
         curr = curr->next_task;
@@ -205,15 +206,14 @@ void edit_task(task* head, int *tasknumber){
 
         if((idx > ((*tasknumber)-1)) || (idx < 1)){
         printf("\nError: Index to edit must be within range\n\n");
-        flush_input_buffer();
         }
         else if(getchar() == '\n'){
             break;
         }
         else{
             printf("\nInvalid input: index must be int and within range.\n\n");
-            flush_input_buffer();
         }
+        flush_input_buffer();
 
     }
     
@@ -252,8 +252,9 @@ void edit_task(task* head, int *tasknumber){
                 else if ((cont == 'y' || cont == 'Y')){
                     if (getchar() == '\n'){
                         curr->data.completed = true;
-                        printf("\nTask set as complete. Returning to main menu...\n\n");
+                        printf("\nTask set as complete. Returning to main menu...\n");
                         display_task(curr);
+                        printf("\n");
                         return;
                     }
                 }
